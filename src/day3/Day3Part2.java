@@ -1,12 +1,8 @@
 package day3;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,8 +33,6 @@ public class Day3Part2 {
         System.out.println(duration2 / 1_000_000 + " <-- Filereading");
         long startTime = System.nanoTime();
 
-        List<Integer> multiplied = new ArrayList<>();
-
         Pattern combinedPattern = Pattern.compile("mul\\(\\d{1,3},\\d{0,3}\\)|do\\(\\)|don't\\(\\)");
 
         Matcher matcher = combinedPattern.matcher(s);
@@ -56,7 +50,6 @@ public class Day3Part2 {
                 }
                 continue;
             }
-
 
             if (!doMultiply) {
                 continue;
