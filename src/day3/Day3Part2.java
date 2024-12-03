@@ -44,25 +44,19 @@ public class Day3Part2 {
         Matcher matcher = combinedPattern.matcher(s);
 
         boolean doMultiply = true;
-        int doLastIndex = 0;
-        int doNotLastIndex = 0;
 
-        while (matcher.find()) { //wrong: 189527826, 178103639, 12041227, 135975459, 91283613, 69247082
+        int sum = 0;
+        while (matcher.find()) {
             String str = matcher.group();
-            if (str.equals("do()")) {
-                doLastIndex = matcher.end();
-                continue;
-            }
-            if (str.equals("don't()")) {
-                doNotLastIndex = matcher.end();
+            if (str.charAt(0) == 'd') {
+                if (str.charAt(2) == 'n') {
+                    doMultiply = false;
+                } else {
+                    doMultiply = true;
+                }
                 continue;
             }
 
-            if (doNotLastIndex > doLastIndex) {
-                doMultiply = false;
-            } else if (doLastIndex > doNotLastIndex) {
-                doMultiply = true;
-            }
 
             if (!doMultiply) {
                 continue;
@@ -70,18 +64,18 @@ public class Day3Part2 {
 
             boolean first = true;
             boolean second = false;
-            StringBuilder firstNumStr = new StringBuilder();
-            StringBuilder secondNumStr = new StringBuilder();
+            int firstNum = 0;
+            int secondNum = 0;
             int left = 0;
             int right = 0;
             int index = 4;
             while (first && left <= MAX_DIGITS) {
                 char c = str.charAt(index);
-                if (Character.isDigit(c)) {
-                    firstNumStr.append(c);
+                if (Character.isDigit(c)) { //no significant performance gain using (c >= '0' && c <= '9')
+                    firstNum = firstNum * 10 + c - '0';
                     left++;
                 }
-                if (c == ',') {
+                else {
                     index = str.indexOf(',');
                     first = false;
                     second = true;
@@ -91,26 +85,21 @@ public class Day3Part2 {
             while (second && right <= MAX_DIGITS) {
                 char c = str.charAt(index);
                 if (Character.isDigit(c)) {
-                    secondNumStr.append(c);
+                    secondNum = secondNum * 10 + c - '0';
                     right++;
-                }
-                if (c == ')') {
+                } else {
                     break;
                 }
                 index++;
             }
-            multiplied.add(Integer.parseInt(firstNumStr.toString()) * Integer.parseInt(secondNumStr.toString()));
+            sum += (firstNum * secondNum);
         }
 
-        int added = 0;
-        for (int sum : multiplied) {
-            added += sum;
-        }
-        System.out.println(added);
+        System.out.println("Answer: " + sum);
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
-        System.out.println(duration + " nanoseconds (filereading excl.)");
         System.out.println((duration / 1_000_000) + " milliseconds (filereading excl.)");
+        System.out.println((duration / 1_000_000) + (duration2 / 1_000_000) + " total runtime");
     }
 }
 
