@@ -16,6 +16,7 @@ public class Day3Part2 {
         String line = "";
         //BufferedReader runtime for bigboy: 633,36 seconds total
         //Files.readAllBytes runtime for bigboy: 14,91 sec total, 156 ms filereading
+        //Optimized solution: 1153 ms total
         byte[] bytes;
         try {
             bytes = Files.readAllBytes(Paths.get("src/day3/bigboy.txt")); //uncommited 94MB txt file
@@ -38,30 +39,23 @@ public class Day3Part2 {
 
         List<Integer> multiplied = new ArrayList<>();
 
-        Pattern pattern = Pattern.compile("mul\\(\\d{1,3},\\d{0,3}\\)");
-        Pattern doPattern = Pattern.compile("do\\(\\)");
-        Pattern doNotPattern = Pattern.compile("don't\\(\\)");
+        Pattern combinedPattern = Pattern.compile("mul\\(\\d{1,3},\\d{0,3}\\)|do\\(\\)|don't\\(\\)");
 
-        Matcher matcher = pattern.matcher(s);
-        Matcher doMatcher = doPattern.matcher(s);
-        Matcher doNotMatcher = doNotPattern.matcher(s);
+        Matcher matcher = combinedPattern.matcher(s);
 
         boolean doMultiply = true;
         int doLastIndex = 0;
         int doNotLastIndex = 0;
 
         while (matcher.find()) { //wrong: 189527826, 178103639, 12041227, 135975459, 91283613, 69247082
-            int currentStart = matcher.start();
             String str = matcher.group();
-
-            doMatcher.region(doLastIndex, currentStart);
-            doNotMatcher.region(doNotLastIndex, currentStart);
-
-            while (doMatcher.find()) {
-                doLastIndex = doMatcher.end();
+            if (str.equals("do()")) {
+                doLastIndex = matcher.end();
+                continue;
             }
-            while (doNotMatcher.find()) {
-                doNotLastIndex = doNotMatcher.end();
+            if (str.equals("don't()")) {
+                doNotLastIndex = matcher.end();
+                continue;
             }
 
             if (doNotLastIndex > doLastIndex) {
