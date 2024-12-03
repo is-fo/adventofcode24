@@ -92,7 +92,7 @@ public class Day3Part2 {
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
         System.out.println((duration / 1_000_000) + " milliseconds (filereading excl.)");
-        System.out.println((duration / 1_000_000) + (duration2 / 1_000_000) + " total runtime");
+        System.out.println((duration / 1_000_000) + (duration2 / 1_000_000) + " ms total runtime");
     }
 }
 
