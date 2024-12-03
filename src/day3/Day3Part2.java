@@ -38,18 +38,30 @@ public class Day3Part2 {
         Pattern doNotPattern = Pattern.compile(doNotRegex);
 
         List<Integer> sums = new ArrayList<>();
-        for (String s : strs) {
-            Matcher matcher = pattern.matcher(s);
-            Matcher doMatcher = doPattern.matcher(s);
-            Matcher doNotMatcher = doNotPattern.matcher(s);
-            boolean doMultiply = true;
-            int doLastIndex = 0;
-            int doNotLastIndex = 0;
+
+
+        boolean doMultiply = true;
+        int doLastIndex = 0;
+        int doNotLastIndex = 0;
+
+        StringBuilder s = new StringBuilder();
+        for (String str : strs) {
+            s.append(str);
+        }
+
+        for (int lol = 0; lol < s.length(); lol++) {
+
+            Matcher matcher = pattern.matcher(s.toString());
+            Matcher doMatcher = doPattern.matcher(s.toString());
+            Matcher doNotMatcher = doNotPattern.matcher(s.toString());
 
             while (matcher.find()) { //wrong: 189527826, 178103639, 12041227, 135975459, 91283613, 69247082
                 int currentStart = matcher.start();
                 String str = matcher.group();
 
+                if (doLastIndex > currentStart) {
+                    break;
+                }
                 doMatcher.region(doLastIndex, currentStart);
                 doNotMatcher.region(doNotLastIndex, currentStart);
 
@@ -67,6 +79,7 @@ public class Day3Part2 {
                 }
 
                 if (!doMultiply) {
+                    System.out.println("didnt multiply: " + str);
                     continue;
                 }
 
@@ -102,6 +115,7 @@ public class Day3Part2 {
                     index++;
                 }
                 sums.add(Integer.parseInt(firstNumStr.toString()) * Integer.parseInt(secondNumStr.toString()));
+                System.out.println("multiplied: " + str);
 
             }
         }
