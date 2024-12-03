@@ -10,11 +10,9 @@ public class Day3Part2 {
 
     private static String readInput() {
         String line = "";
-        //BufferedReader runtime for bigboy: 633,36 seconds total
-        //Files.readAllBytes runtime for bigboy: 14,91 sec total, 156 ms filereading
-        //Optimized solution: 1153 ms total
         byte[] bytes;
         try {
+            //~152ms filereading
             bytes = Files.readAllBytes(Paths.get("src/day3/bigboy.txt")); //uncommited 94MB txt file
             line = new String(bytes);
         } catch (IOException e) {
@@ -24,19 +22,13 @@ public class Day3Part2 {
     }
 
     public static void main(String[] args) {
-        final int MAX_DIGITS = 3;
-        long startTime2 = System.nanoTime();
 
         String s = readInput();
-        long endTime2 = System.nanoTime();
-        long duration2 = endTime2 - startTime2;
-        System.out.println(duration2 / 1_000_000 + " <-- Filereading");
+
         long startTime = System.nanoTime();
-
+        //largest performance gain here by combining the patterns...
         Pattern combinedPattern = Pattern.compile("mul\\(\\d{1,3},\\d{0,3}\\)|do\\(\\)|don't\\(\\)");
-
         Matcher matcher = combinedPattern.matcher(s);
-
         boolean doMultiply = true;
 
         int sum = 0;
@@ -48,6 +40,7 @@ public class Day3Part2 {
                 } else {
                     doMultiply = true;
                 }
+                //...then exiting early if it wasnt == "mul(x,y)"
                 continue;
             }
 
@@ -55,35 +48,26 @@ public class Day3Part2 {
                 continue;
             }
 
-            boolean first = true;
-            boolean second = false;
             int firstNum = 0;
             int secondNum = 0;
-            int left = 0;
-            int right = 0;
             int index = 4;
-            while (first && left <= MAX_DIGITS) {
-                char c = str.charAt(index);
-                if (Character.isDigit(c)) { //no significant performance gain using (c >= '0' && c <= '9')
+            while (firstNum / 1000 == 0) {
+                char c = str.charAt(index++);
+                if (Character.isDigit(c)) {
                     firstNum = firstNum * 10 + c - '0';
-                    left++;
                 }
                 else {
                     index = str.indexOf(',');
-                    first = false;
-                    second = true;
+                    break;
                 }
-                index++;
             }
-            while (second && right <= MAX_DIGITS) {
-                char c = str.charAt(index);
+            while (secondNum / 1000 == 0) {
+                char c = str.charAt(++index);
                 if (Character.isDigit(c)) {
                     secondNum = secondNum * 10 + c - '0';
-                    right++;
                 } else {
                     break;
                 }
-                index++;
             }
             sum += (firstNum * secondNum);
         }
@@ -92,7 +76,6 @@ public class Day3Part2 {
         long endTime = System.nanoTime();
         long duration = endTime - startTime;
         System.out.println((duration / 1_000_000) + " milliseconds (filereading excl.)");
-        System.out.println((duration / 1_000_000) + (duration2 / 1_000_000) + " ms total runtime");
     }
 }
 
